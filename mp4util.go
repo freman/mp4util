@@ -2,11 +2,12 @@ package mp4util
 
 import (
 	"os"
+	"time"
 )
 
 // Returns the duration, in seconds, of the mp4 file at the provided filepath.
 // If an error occurs, the error returned is non-nil
-func Duration(filepath string) (float64, error) {
+func Duration(filepath string) (time.Duration, error) {
 	file, _ := os.Open(filepath)
 	defer file.Close()
 
@@ -27,7 +28,7 @@ func Duration(filepath string) (float64, error) {
 		return 0, err
 	}
 
-	return duration, nil
+	return time.Duration(duration * float64(time.Second)), nil
 }
 
 // Finds the starting position of the atom of the given name if it is a direct child of the atom
