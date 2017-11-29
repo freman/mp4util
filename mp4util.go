@@ -6,7 +6,7 @@ import (
 
 // Returns the duration, in seconds, of the mp4 file at the provided filepath.
 // If an error occurs, the error returned is non-nil
-func Duration(filepath string) (int, error) {
+func Duration(filepath string) (float64, error) {
 	file, _ := os.Open(filepath)
 	defer file.Close()
 
@@ -61,7 +61,7 @@ func findAtom(startPos int64, atomName string, file *os.File) (int64, int64, err
 
 // Returns the duration in seconds as given by the data in the mvhd atom starting at mvhdStart
 // Returns non-nill error is there is an error.
-func durationFromMvhdAtom(mvhdStart int64, mvhdLength int64, file *os.File) (int, error) {
+func durationFromMvhdAtom(mvhdStart int64, mvhdLength int64, file *os.File) (float64, error) {
 	buffer := make([]byte, 8)
 	_, err := file.ReadAt(buffer, mvhdStart+20) // The timescale field starts at the 21st byte of the mvhd atom
 	if err != nil {
@@ -72,7 +72,7 @@ func durationFromMvhdAtom(mvhdStart int64, mvhdLength int64, file *os.File) (int
 	// The duration is bytes 25-28
 	timescale := convertBytesToInt(buffer[0:4]) // This is in number of units per second
 	durationInTimeScale := convertBytesToInt(buffer[4:])
-	return int(durationInTimeScale) / int(timescale), nil
+	return float64(durationInTimeScale) / float64(timescale), nil
 }
 
 func convertBytesToInt(buf []byte) int {
